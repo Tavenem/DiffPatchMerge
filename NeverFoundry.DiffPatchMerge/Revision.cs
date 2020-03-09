@@ -220,7 +220,7 @@ namespace NeverFoundry.DiffPatchMerge
                         }
                         if (patch.Length > 0)
                         {
-                            if (index + patch.Length >= text.Length)
+                            if (index + patch.Length > text.Length)
                             {
                                 return false;
                             }

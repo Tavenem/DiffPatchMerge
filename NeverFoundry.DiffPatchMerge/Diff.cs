@@ -427,6 +427,7 @@ namespace NeverFoundry.DiffPatchMerge
                         {
                             bestScore = score;
                             bestEquality1 = equality1;
+                            bestEdit = edit;
                             bestEquality2 = equality2;
                         }
                     }
@@ -469,7 +470,7 @@ namespace NeverFoundry.DiffPatchMerge
                     var overlapLength2 = GetCommonOverlap(insertion, deletion);
                     if (overlapLength1 >= overlapLength2)
                     {
-                        if (overlapLength1 > deletion.Length / 2.0
+                        if (overlapLength1 >= deletion.Length / 2.0
                             || overlapLength1 >= insertion.Length / 2.0)
                         {
                             diffs.Insert(index, new Diff(DiffOperation.Unchanged, insertion.Substring(0, overlapLength1)));
@@ -478,12 +479,12 @@ namespace NeverFoundry.DiffPatchMerge
                             index++;
                         }
                     }
-                    else if (overlapLength2 > deletion.Length / 2.0
+                    else if (overlapLength2 >= deletion.Length / 2.0
                         || overlapLength2 >= insertion.Length / 2.0)
                     {
                         diffs.Insert(index, new Diff(DiffOperation.Unchanged, deletion.Substring(0, overlapLength2)));
                         diffs[index - 1].Operation = DiffOperation.Inserted;
-                        diffs[index - 1].Text = deletion.Substring(0, insertion.Length - overlapLength2);
+                        diffs[index - 1].Text = insertion.Substring(0, insertion.Length - overlapLength2);
                         diffs[index + 1].Operation = DiffOperation.Deleted;
                         diffs[index + 1].Text = deletion.Substring(overlapLength2);
                         index++;
