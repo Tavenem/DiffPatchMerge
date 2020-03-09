@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>Latest</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' ">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Authors>Wil Stead</Authors>
+    <Company>NeverFoundry</Company>
+    <Description>A simple diff-patch-merge implementation based on Google's algorithm. Simplifies and speeds up operations by only accepting strict, rather than fuzzy matching, for use cases where this is either expected or required.</Description>
+    <Copyright>Copyright (c) 2020 Wil Stead</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageId>NeverFoundry.DiffPatchMerge</PackageId>
+    <Product>NeverFoundry.DiffPatchMerge</Product>
+    <PackageTags>Diff</PackageTags>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <Target Name="NugetAdd" AfterTargets="Pack">
+    <exec command="nuget push -Source &quot;WS-NuGet&quot; -ApiKey AzureDevOps $(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" />
+  </Target>
+
+</Project>
