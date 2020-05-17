@@ -20,7 +20,7 @@
     <PackageId>NeverFoundry.DiffPatchMerge</PackageId>
     <Product>NeverFoundry.DiffPatchMerge</Product>
     <PackageTags>Diff</PackageTags>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <Target Name="NugetAdd" AfterTargets="Pack">

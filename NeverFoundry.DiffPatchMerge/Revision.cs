@@ -153,8 +153,17 @@ namespace NeverFoundry.DiffPatchMerge
         public override string ToString()
         {
             var text = new StringBuilder();
+            var initial = true;
             foreach (var patch in Patches)
             {
+                if (!initial)
+                {
+                    text.Append('\t');
+                }
+                else
+                {
+                    initial = false;
+                }
                 text.Append(patch.ToString());
             }
             return text.ToString();
