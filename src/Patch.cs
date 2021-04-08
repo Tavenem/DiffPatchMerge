@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NeverFoundry.DiffPatchMerge
+namespace Tavenem.DiffPatchMerge
 {
     /// <summary>
     /// Represents a change within a text from one version to another.
@@ -87,7 +87,7 @@ namespace NeverFoundry.DiffPatchMerge
             {
                 return false;
             }
-            var param = text.Substring(1);
+            var param = text[1..];
             switch (text[0])
             {
                 case '+':
@@ -123,7 +123,8 @@ namespace NeverFoundry.DiffPatchMerge
         /// <see langword="true" /> if the current object is equal to the <paramref name="other" />
         /// parameter; otherwise, <see langword="false" />.
         /// </returns>
-        public bool Equals(Patch other) => Length == other.Length
+        public bool Equals(Patch? other) => other is not null
+            && Length == other.Length
             && Operation == other.Operation
             && (Operation != DiffOperation.Inserted
             || string.Equals(Text, other.Text));
@@ -136,7 +137,7 @@ namespace NeverFoundry.DiffPatchMerge
         /// <see langword="true" /> if the specified object is equal to the current object;
         /// otherwise, <see langword="false" />.
         /// </returns>
-        public override bool Equals(object obj) => obj is Patch other && Equals(other);
+        public override bool Equals(object? obj) => obj is Patch other && Equals(other);
 
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>

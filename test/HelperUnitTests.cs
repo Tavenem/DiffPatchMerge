@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace NeverFoundry.DiffPatchMerge.Test
+namespace Tavenem.DiffPatchMerge.Test
 {
     [TestClass]
     public class HelperUnitTests

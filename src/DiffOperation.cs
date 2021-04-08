@@ -1,4 +1,4 @@
-﻿namespace NeverFoundry.DiffPatchMerge
+﻿namespace Tavenem.DiffPatchMerge
 {
     /// <summary>
     /// The operation represented by a particular change in a text.

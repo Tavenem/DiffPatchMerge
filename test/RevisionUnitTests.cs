@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 
-namespace NeverFoundry.DiffPatchMerge.Test
+namespace Tavenem.DiffPatchMerge.Test
 {
     [TestClass]
     public class RevisionUnitTests

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace NeverFoundry.DiffPatchMerge
+namespace Tavenem.DiffPatchMerge
 {
     /// <summary>
     /// Represents a change within a text.
     /// </summary>
     public class Diff : IEquatable<Diff>
     {
-        private static readonly Regex _BlankLineEnd = new Regex("\\n\\r?\\n\\Z", RegexOptions.Compiled);
-        private static readonly Regex _BlankLineStart = new Regex("\\A\\r?\\n\\r?\\n", RegexOptions.Compiled);
+        private static readonly Regex _BlankLineEnd = new("\\n\\r?\\n\\Z", RegexOptions.Compiled);
+        private static readonly Regex _BlankLineStart = new("\\A\\r?\\n\\r?\\n", RegexOptions.Compiled);
 
         /// <summary>
         /// The "cost" of an empty edit in characters.
@@ -124,7 +124,7 @@ namespace NeverFoundry.DiffPatchMerge
         /// <see langword="true" /> if the current object is equal to the <paramref name="other" />
         /// parameter; otherwise, <see langword="false" />.
         /// </returns>
-        public bool Equals(Diff other) => Operation == other.Operation && string.Equals(Text, other.Text);
+        public bool Equals(Diff? other) => other is not null && Operation == other.Operation && string.Equals(Text, other.Text);
 
         /// <summary>
         /// Determines whether the specified object is equal to the current object.
@@ -134,7 +134,7 @@ namespace NeverFoundry.DiffPatchMerge
         /// <see langword="true" /> if the specified object is equal to the current object;
         /// otherwise, <see langword="false" />.
         /// </returns>
-        public override bool Equals(object obj) => obj is Diff other && Equals(other);
+        public override bool Equals(object? obj) => obj is Diff other && Equals(other);
 
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>
@@ -420,8 +420,8 @@ namespace NeverFoundry.DiffPatchMerge
                     while (edit.Length != 0 && equality2.Length != 0 && edit[0] == equality2[0])
                     {
                         equality1 += edit[0];
-                        edit = edit.Substring(1) + equality2[0].ToString();
-                        equality2 = equality2.Substring(1);
+                        edit = edit[1..] + equality2[0].ToString();
+                        equality2 = equality2[1..];
                         var score = GetSemanticScore(equality1, edit) + GetSemanticScore(edit, equality2);
                         if (score >= bestScore)
                         {
@@ -475,7 +475,7 @@ namespace NeverFoundry.DiffPatchMerge
                         {
                             diffs.Insert(index, new Diff(DiffOperation.Unchanged, insertion.Substring(0, overlapLength1)));
                             diffs[index - 1].Text = deletion.Substring(0, deletion.Length - overlapLength1);
-                            diffs[index + 1].Text = insertion.Substring(overlapLength1);
+                            diffs[index + 1].Text = insertion[overlapLength1..];
                             index++;
                         }
                     }
@@ -486,7 +486,7 @@ namespace NeverFoundry.DiffPatchMerge
                         diffs[index - 1].Operation = DiffOperation.Inserted;
                         diffs[index - 1].Text = insertion.Substring(0, insertion.Length - overlapLength2);
                         diffs[index + 1].Operation = DiffOperation.Deleted;
-                        diffs[index + 1].Text = deletion.Substring(overlapLength2);
+                        diffs[index + 1].Text = deletion[overlapLength2..];
                         index++;
                     }
                     index++;
@@ -503,8 +503,8 @@ namespace NeverFoundry.DiffPatchMerge
             }
 
             var commonLength = GetCommonPrefixLength(text1, text2, out var commonPrefix);
-            text1 = text1.Substring(commonLength);
-            text2 = text2.Substring(commonLength);
+            text1 = text1[commonLength..];
+            text2 = text2[commonLength..];
 
             commonLength = GetCommonSuffixLength(text1, text2, out var commonSuffix);
             text1 = text1.Substring(0, text1.Length - commonLength);
@@ -552,7 +552,7 @@ namespace NeverFoundry.DiffPatchMerge
                 {
                     new Diff(operation, longText.Substring(0, index)),
                     new Diff(DiffOperation.Unchanged, shortText),
-                    new Diff(operation, longText.Substring(index + shortText.Length)),
+                    new Diff(operation, longText[(index + shortText.Length)..]),
                 };
             }
 
@@ -688,8 +688,8 @@ namespace NeverFoundry.DiffPatchMerge
         {
             var text1a = text1.Substring(0, x);
             var text2a = text2.Substring(0, y);
-            var text1b = text1.Substring(x);
-            var text2b = text2.Substring(y);
+            var text1b = text1[x..];
+            var text2b = text2[y..];
 
             var diffs = ComputeDiff(text1a, text2a, deadline);
             var diffsB = ComputeDiff(text1b, text2b, deadline);
@@ -742,7 +742,7 @@ namespace NeverFoundry.DiffPatchMerge
 
             if (text1Length > text2Length)
             {
-                text1 = text1.Substring(text1Length - text2Length);
+                text1 = text1[(text1Length - text2Length)..];
             }
             else if (text1Length < text2Length)
             {
@@ -758,14 +758,14 @@ namespace NeverFoundry.DiffPatchMerge
             var length = 1;
             while (true)
             {
-                var pattern = text1.Substring(textLength - length);
+                var pattern = text1[(textLength - length)..];
                 var found = text2.IndexOf(pattern, StringComparison.Ordinal);
                 if (found == -1)
                 {
                     return best;
                 }
                 length += found;
-                if (found == 0 || text1.Substring(textLength - length) == text2.Substring(0, length))
+                if (found == 0 || text1[(textLength - length)..] == text2.Substring(0, length))
                 {
                     best = length;
                     length++;
@@ -803,7 +803,7 @@ namespace NeverFoundry.DiffPatchMerge
                     break;
                 }
             }
-            commonSuffix = text1.Substring(text1Length - index);
+            commonSuffix = text1[(text1Length - index)..];
             return index;
         }
 
@@ -863,15 +863,15 @@ namespace NeverFoundry.DiffPatchMerge
             var bestShortTextSuffix = string.Empty;
             while (j < shortText.Length && (j = shortText.IndexOf(seed, j + 1, StringComparison.Ordinal)) != -1)
             {
-                var prefixLength = GetCommonPrefixLength(longText.Substring(index), shortText.Substring(j), out var c1);
+                var prefixLength = GetCommonPrefixLength(longText[index..], shortText[j..], out var c1);
                 var suffixLength = GetCommonSuffixLength(longText.Substring(0, index), shortText.Substring(0, j), out var c2);
                 if (bestCommon.Length < suffixLength + prefixLength)
                 {
                     bestCommon = c2 + c1;
                     bestLongTextPrefix = longText.Substring(0, index - suffixLength);
-                    bestLongTextSuffix = longText.Substring(index + prefixLength);
+                    bestLongTextSuffix = longText[(index + prefixLength)..];
                     bestShortTextPrefix = longText.Substring(0, j - suffixLength);
-                    bestShortTextSuffix = longText.Substring(j + prefixLength);
+                    bestShortTextSuffix = longText[(j + prefixLength)..];
                 }
             }
             return bestCommon.Length * 2 >= longText.Length
@@ -955,7 +955,7 @@ namespace NeverFoundry.DiffPatchMerge
                 {
                     if (lines.Count == maxLines)
                     {
-                        line = text.Substring(lineStart);
+                        line = text[lineStart..];
                         lineEnd = text.Length;
                     }
                     lines.Add(line);
@@ -1008,8 +1008,8 @@ namespace NeverFoundry.DiffPatchMerge
                                         diffs.Insert(0, new Diff(DiffOperation.Unchanged, commonString));
                                         index++;
                                     }
-                                    insertText = insertText.Substring(commonLength);
-                                    deleteText = deleteText.Substring(commonLength);
+                                    insertText = insertText[commonLength..];
+                                    deleteText = deleteText[commonLength..];
                                 }
                                 commonLength = GetCommonSuffixLength(insertText, deleteText, out commonString);
                                 if (commonLength != 0)
@@ -1071,7 +1071,7 @@ namespace NeverFoundry.DiffPatchMerge
                     else if (diffs[index].Text.StartsWith(diffs[index + 1].Text, StringComparison.Ordinal))
                     {
                         diffs[index - 1].Text += diffs[index + 1].Text;
-                        diffs[index].Text = diffs[index].Text.Substring(diffs[index + 1].Text.Length) + diffs[index + 1].Text;
+                        diffs[index].Text = diffs[index].Text[diffs[index + 1].Text.Length..] + diffs[index + 1].Text;
                         diffs.RemoveAt(index + 1);
                         changes = true;
                     }
@@ -1162,7 +1162,7 @@ namespace NeverFoundry.DiffPatchMerge
                 {
                     if (words.Count == maxWords)
                     {
-                        word = text.Substring(wordStart);
+                        word = text[wordStart..];
                         wordEnd = text.Length;
                     }
                     words.Add(word);

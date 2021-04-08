@@ -1,16 +1,13 @@
-﻿using NeverFoundry.DiffPatchMerge;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
 using System.Text;
 
-namespace NeverFoundry
+namespace Tavenem.DiffPatchMerge
 {
     /// <summary>
-    /// Helper methods.
+    /// Extension methods.
     /// </summary>
-    public static class DiffPatchMergeHelpers
+    public static class DiffPatchMergeExtensions
     {
         /// <summary>
         /// Gets the result of applying a sequence of revisions to a source <paramref name="text"/>.
@@ -34,7 +31,7 @@ namespace NeverFoundry
             {
                 return result;
             }
-            throw new ArgumentException(nameof(text));
+            throw new ArgumentException(null, nameof(text));
         }
 
         /// <summary>

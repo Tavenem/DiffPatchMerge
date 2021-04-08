@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
-namespace NeverFoundry.DiffPatchMerge
+namespace Tavenem.DiffPatchMerge
 {
     /// <summary>
     /// Represents a change from one version of a text to another.
@@ -41,7 +41,7 @@ namespace NeverFoundry.DiffPatchMerge
         /// The <see cref="Revision"/> representing the change from <paramref name="text1"/> to
         /// <paramref name="text2"/>.
         /// </returns>
-        public static Revision GetRevison(string text1, string text2) => new Revision(Diff.GetDiff(text1, text2));
+        public static Revision GetRevison(string text1, string text2) => new(Diff.GetDiff(text1, text2));
 
         /// <summary>
         /// Attempt to parse a delta-formatted <see cref="Revision"/> string.
@@ -89,7 +89,7 @@ namespace NeverFoundry.DiffPatchMerge
             {
                 return result;
             }
-            throw new ArgumentException(nameof(text));
+            throw new ArgumentException(null, nameof(text));
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace NeverFoundry.DiffPatchMerge
             {
                 return result;
             }
-            throw new ArgumentException(nameof(text));
+            throw new ArgumentException(null, nameof(text));
         }
 
         /// <summary>
